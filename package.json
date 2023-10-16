@@ -9,16 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/next-js": "^2.1.5",
+    "@chakra-ui/react": "^2.8.1",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "apexcharts": "^3.43.0",
+    "framer-motion": "^10.16.4",
+    "next": "13.5.5",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "13.5.5"
+    "react-apexcharts": "^1.4.1",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "13.5.5"
+    "eslint-config-next": "13.5.5",
+    "typescript": "^5"
   }
 }

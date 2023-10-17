@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ChakraProvider } from '@chakra-ui/react'
+import NavBar from '@/components/NavBar'
 
 export const metadata: Metadata = {
   title: 'Kanban Board',
@@ -14,7 +15,10 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body>
-        <ChakraProvider>{children}</ChakraProvider>
+        <ChakraProvider>
+          <NavBar/>
+          {children}
+        </ChakraProvider>
       </body>
     </html>
   )

@@ -2,15 +2,18 @@
 
 import { Flex } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { AddIcon } from "@chakra-ui/icons";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/utils/firebase/firebaseService";
 
 const Column = dynamic(() => import("./Column"), { ssr: false });
 
 interface Task {
   id: string;
   content: string;
+  column_id: number;
+  position: number;
 }
 
 interface ColumnData {
@@ -28,6 +31,49 @@ interface InitialData {
 export default function KanbanBoard() {
   const [state, setState] = useState<InitialData>(initialData);
   
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch all tasks from Firebase
+        const tasksCollection = collection(db, "Tasks");
+        const tasksSnapshot = await getDocs(tasksCollection);
+
+        const tasksData: Record<string, Task> = {};
+
+        tasksSnapshot.forEach((doc) => {
+          const task = doc.data() as Task;
+          tasksData[doc.id] = task;
+        });
+
+
+        // Update the state with the fetched tasks
+        const newState: InitialData = {
+          ...state,
+          tasks: tasksData,
+        };
+        setState(newState);
+
+        // Update the taskIds of columns based on column_id
+        const columnsWithTasks = { ...newState.columns };
+
+        Object.values(state.tasks).forEach((task: Task) => {
+          const columnId = task.column_id;
+          if (columnsWithTasks[columnId]) {
+            columnsWithTasks[columnId].taskIds.push(task.id);
+          }
+        });
+
+        setState((prevState) => ({
+          ...prevState,
+          columns: columnsWithTasks,
+        }));
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    }
+
+    fetchData();
+  }, []); // Only fetch data once when the component mounts
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;
@@ -121,12 +167,6 @@ export default function KanbanBoard() {
 
 const initialData: InitialData = {
   tasks: {
-    "1": { id: "1", content: "Configure Next.js application" },
-    "2": { id: "2", content: "Configure Next.js and tailwind" },
-    "3": { id: "3", content: "Create sidebar navigation menu" },
-    "4": { id: "4", content: "Create page footer" },
-    "5": { id: "5", content: "Create page navigation menu" },
-    "6": { id: "6", content: "Create page layout" },
   },
   columns: {
     "column-1": {

@@ -24,9 +24,27 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons'
+import { onAuthStateChange, signOutUser} from '@/utils/firebase/authService';
+import { User } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 
 export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure()
+  const [user, setUser] = useState<User | null>();
+
+  useEffect(() => {
+    const unsubscribe = () => {
+       return onAuthStateChange((user) => {
+        if(user) {
+          setUser(user)
+        }
+        else{
+          setUser(user)
+        }
+       });
+    }
+    return unsubscribe();
+  }, []);
 
   return (
     <Box>
@@ -64,9 +82,21 @@ export default function NavBar() {
           justify={'flex-end'}
           direction={'row'}
           spacing={6}>
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'sign-in'}>
-            Sign In
-          </Button>
+          {user ? (
+            <Button
+              as={'a'}
+              fontSize={'sm'}
+              fontWeight={400}
+              variant={'link'}
+              onClick={() => signOutUser()} // Add a sign-out function
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'sign-in'}>
+              Sign In
+            </Button>
+          )}
           <Button
             as={'a'}
             display={{ base: 'none', md: 'inline-flex' }}

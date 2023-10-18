@@ -32,30 +32,35 @@ export default function SignInForm() {
     .then((user) => {
       setAlert({
         status: 'success',
-        title: `Welcome ${user.user.displayName}`,
+        title: `Welcome ${user.user.email}`,
         description: 'Sign in successful!'
       });
     })
     .catch((error) => {
       setAlert({
         status: 'error',
-        title: error.message,
-        description: 'Incorrect email or password. Please try again.'
+        title: 'Incorrect email or password. Please try again.',
+        description: ''
       });
     });
   }
 
   useEffect(() => {
-    const logout = () => {
-       onAuthStateChange((user) => {
-        setUser(user)
+    const unsubscribe = () => {
+       return onAuthStateChange((user) => {
+        if(user) {
+          setUser(user)
+        }
+        else{
+          setUser(user)
+        }
        });
     }
-    return logout();
+    return unsubscribe();
   }, []);
 
   if (user) {
-    router.push('/dashboard');
+    router.push('/kanban');
   };
 
   return (

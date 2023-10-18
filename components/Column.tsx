@@ -16,6 +16,8 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
+import { collection, addDoc } from "firebase/firestore"; 
+import { db } from "@/utils/firebase/firebaseService";
 
 interface ColumnProps {
   column: {
@@ -40,10 +42,20 @@ const Column: React.FC<ColumnProps> = ({ column, tasks }) => {
     setIsModalOpen(false);
   };
 
-  const handleSaveTask = () => {
-    // Here, you can save the task with the details in newTaskDetails.
-    // For a simple example, you can just log the task details for now.
-    console.log("New Task Details: ", newTaskDetails);
+  const handleSaveTask = async () => {
+    try {
+      const columnId = column.id; // Get the column ID
+      const newTaskContent = newTaskDetails;
+
+      const docRef = await addDoc(collection(db, "Tasks"), {
+        column_id: columnId,
+        content: newTaskContent,
+        position: tasks.length,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
 
     // Close the modal
     closeModal();

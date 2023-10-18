@@ -1,15 +1,16 @@
 import {initializeApp, getApps} from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from "firebase/firestore";
 
-const firebaseConfig = { 
-    apiKey:process.env.NEXT_PUBLIC_API_KEY, 
-    authDomain:process.env.NEXT_PUBLIC_AUTH_DOMAIN,
-    projectId:process.env.NEXT_PUBLIC_PROJECT_ID,
-    storageBucket:process.env.NEXT_PUBLIC_STORAGE_BUCKET ,
-    messagingSenderId:process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID ,
-    appId:process.env.NEXT_PUBLIC_APP_ID ,
-    measurementId:process.env.NEXT_PUBLIC_MEASUREMENT_ID
-};
-
+const firebaseConfig = {
+    apiKey: "AIzaSyBDyoIp_n8N4RYOsh9OhGLYqQEJVJ9zJvI",
+    authDomain: "kanban-4c732.firebaseapp.com",
+    projectId: "kanban-4c732",
+    storageBucket: "kanban-4c732.appspot.com",
+    messagingSenderId: "204460859673",
+    appId: "1:204460859673:web:ea956ce68e6145e2c52588",
+    measurementId: "G-F3KJBE0NF6"
+  };
 const firebase = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 export const auth = getAuth(firebase);
+const db = getFirestore(firebase);

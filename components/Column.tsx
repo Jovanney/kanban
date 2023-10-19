@@ -122,6 +122,7 @@ const Column: React.FC<ColumnProps> = ({ column, tasks, fetchTasks }) => {
                 )}
               </Draggable>
             ))}
+            {droppableProvided.placeholder}
           </Flex>
         )}
       </Droppable>

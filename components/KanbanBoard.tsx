@@ -4,7 +4,7 @@ import { Flex } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, writeBatch } from "firebase/firestore";
 import { db } from "@/utils/firebase/firebaseService";
 
 const Column = dynamic(() => import("./Column"), { ssr: false });
@@ -28,7 +28,7 @@ interface InitialData {
   columnOrder: string[];
 }
 
-async function fetchTasksFromFirestore(){
+const fetchTasksFromFirestore = async () => {
   const tasksQuery = query(collection(db, "Tasks"));
   const tasksSnapshot = await getDocs(tasksQuery);
   const tasks = tasksSnapshot.docs.map((doc) => ({
@@ -39,33 +39,83 @@ async function fetchTasksFromFirestore(){
   return tasks;
 }
 
+const reorderColumnList = async (sourceCol: ColumnData, startIndex: number, endIndex: number) => {
+  const newTaskIds = Array.from(sourceCol.taskIds);
+  const [removed] = newTaskIds.splice(startIndex, 1);
+
+  newTaskIds.splice(endIndex, 0, removed);
+  const newColumn: ColumnData = {
+    ...sourceCol,
+    taskIds: newTaskIds,
+  };
+
+  // Update the positions of tasks in Firestore
+  const tasksToUpdate = newTaskIds.map((taskId, index) => ({
+    id: taskId,
+    position: index,
+  }));
+
+  // Create a batch to update tasks in Firestore
+  const batch = writeBatch(db);
+  const taskRef = collection(db, "Tasks");
+
+  tasksToUpdate.forEach((task) => {
+    const taskDocRef = doc(taskRef, task.id);
+    batch.update(taskDocRef, { position: task.position });
+  });
+
+  // Commit the batch update
+  await batch.commit();
+
+  return newColumn;
+};
 
 
 export default function KanbanBoard() {
   const [state, setState] = useState<InitialData>(initialData);
-  const [taskss, setTaskss] = useState<Task[]>([]);
   
   async function fetchTasks() {
     const data = await fetchTasksFromFirestore();
-    setTaskss(data);
-  };
+    const updatedColumns = { ...state.columns }; // Create a copy of columns
+
+    data.forEach((task) => {
+      if (updatedColumns[task.column_id] && !updatedColumns[task.column_id].taskIds.includes(task.id)) {
+        // Check if the task ID is not already in the column's taskIds array
+          updatedColumns[task.column_id].taskIds.push(task.id);
+      }
+    });
+    const newState = {
+      ...state,
+      tasks: {
+        ...state.tasks, 
+        ...data.reduce((acc, task) => {
+          acc[task.id] = task;
+          return acc;
+        }, {} as Record<string, Task>),
+      },
+      columns: updatedColumns,
+    };
+
+    console.log("state novo", newState)
+    setState(newState);
+  }
   
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     const { destination, source } = result;
 
     // If user tries to drop in an unknown destination
-    if (!destination) return;
+    if (!destination) return console.log("Destination is null");
 
     // if the user drags and drops back in the same position
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
-      return;
+      return console.log("Destination is the same Column and position");
     }
 
     // If the user drops within the same column but in a different position
@@ -73,12 +123,12 @@ export default function KanbanBoard() {
     const destinationCol = state.columns[destination.droppableId];
 
     if (sourceCol.id === destinationCol.id) {
-      const newColumn = reorderColumnList(
+      const newColumn = await reorderColumnList(
         sourceCol,
         source.index,
         destination.index
       );
-
+      
       const newState = {
         ...state,
         columns: {
@@ -87,6 +137,7 @@ export default function KanbanBoard() {
         },
       };
       setState(newState);
+      fetchTasks();
       return;
     }
 
@@ -134,7 +185,9 @@ export default function KanbanBoard() {
         <Flex justify="space-between" px="4rem">
           {state.columnOrder.map((columnId) => {
             const column = state.columns[columnId];
-            const tasks = taskss.filter((task) => task.column_id === columnId);
+            const tasks = column.taskIds
+            .map((taskId) => state.tasks[taskId])
+            .sort((a, b) => a.position - b.position);;
             return <Column key={column.id} column={column} tasks={tasks} fetchTasks={fetchTasks} />;
           })}
         </Flex>
@@ -166,17 +219,4 @@ const initialData: InitialData = {
   },
   // Facilitate reordering of the columns
   columnOrder: ["column-1", "column-2", "column-3"],
-};
-
-const reorderColumnList = (sourceCol: ColumnData, startIndex: number, endIndex: number) => {
-  const newTaskIds = Array.from(sourceCol.taskIds);
-  const [removed] = newTaskIds.splice(startIndex, 1);
-  newTaskIds.splice(endIndex, 0, removed);
-
-  const newColumn: ColumnData = {
-    ...sourceCol,
-    taskIds: newTaskIds,
-  };
-
-  return newColumn;
 };

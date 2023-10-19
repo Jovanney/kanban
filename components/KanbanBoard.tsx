@@ -28,52 +28,28 @@ interface InitialData {
   columnOrder: string[];
 }
 
+async function fetchTasksFromFirestore(){
+  const tasksQuery = query(collection(db, "Tasks"));
+  const tasksSnapshot = await getDocs(tasksQuery);
+  const tasks = tasksSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Task[];
+
+  return tasks;
+}
+
 export default function KanbanBoard() {
   const [state, setState] = useState<InitialData>(initialData);
-  
+  const [taskss, setTaskss] = useState<Task[]>([]);
   useEffect(() => {
-    async function fetchData() {
-      try {
-        // Fetch all tasks from Firebase
-        const tasksCollection = collection(db, "Tasks");
-        const tasksSnapshot = await getDocs(tasksCollection);
+    async function fetchTasks() {
+      const data = await fetchTasksFromFirestore();
+      setTaskss(data);
+    };
 
-        const tasksData: Record<string, Task> = {};
-
-        tasksSnapshot.forEach((doc) => {
-          const task = doc.data() as Task;
-          tasksData[doc.id] = task;
-        });
-
-
-        // Update the state with the fetched tasks
-        const newState: InitialData = {
-          ...state,
-          tasks: tasksData,
-        };
-        setState(newState);
-
-        // Update the taskIds of columns based on column_id
-        const columnsWithTasks = { ...newState.columns };
-
-        Object.values(state.tasks).forEach((task: Task) => {
-          const columnId = task.column_id;
-          if (columnsWithTasks[columnId]) {
-            columnsWithTasks[columnId].taskIds.push(task.id);
-          }
-        });
-
-        setState((prevState) => ({
-          ...prevState,
-          columns: columnsWithTasks,
-        }));
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    }
-
-    fetchData();
-  }, []); // Only fetch data once when the component mounts
+    fetchTasks();
+  }, []);
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result;
@@ -156,17 +132,17 @@ export default function KanbanBoard() {
           {state.columnOrder.map((columnId) => {
             const column = state.columns[columnId];
             const tasks = column.taskIds.map((taskId) => state.tasks[taskId]);
-
             return <Column key={column.id} column={column} tasks={tasks} />;
           })}
         </Flex>
       </Flex>
     </DragDropContext>
   );
-}
+};
 
 const initialData: InitialData = {
   tasks: {
+    
   },
   columns: {
     "column-1": {

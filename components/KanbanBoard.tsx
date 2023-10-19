@@ -12,7 +12,7 @@ const Column = dynamic(() => import("./Column"), { ssr: false });
 interface Task {
   id: string;
   content: string;
-  column_id: number;
+  column_id: string;
   position: number;
 }
 
@@ -39,15 +39,18 @@ async function fetchTasksFromFirestore(){
   return tasks;
 }
 
+
+
 export default function KanbanBoard() {
   const [state, setState] = useState<InitialData>(initialData);
   const [taskss, setTaskss] = useState<Task[]>([]);
+  
+  async function fetchTasks() {
+    const data = await fetchTasksFromFirestore();
+    setTaskss(data);
+  };
+  
   useEffect(() => {
-    async function fetchTasks() {
-      const data = await fetchTasksFromFirestore();
-      setTaskss(data);
-    };
-
     fetchTasks();
   }, []);
 
@@ -131,8 +134,8 @@ export default function KanbanBoard() {
         <Flex justify="space-between" px="4rem">
           {state.columnOrder.map((columnId) => {
             const column = state.columns[columnId];
-            const tasks = column.taskIds.map((taskId) => state.tasks[taskId]);
-            return <Column key={column.id} column={column} tasks={tasks} />;
+            const tasks = taskss.filter((task) => task.column_id === columnId);
+            return <Column key={column.id} column={column} tasks={tasks} fetchTasks={fetchTasks} />;
           })}
         </Flex>
       </Flex>

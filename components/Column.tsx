@@ -28,9 +28,10 @@ interface ColumnProps {
     id: string;
     content: string;
   }[];
+  fetchTasks: () => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ column, tasks }) => {
+const Column: React.FC<ColumnProps> = ({ column, tasks, fetchTasks }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTaskDetails, setNewTaskDetails] = useState("");
 
@@ -52,6 +53,7 @@ const Column: React.FC<ColumnProps> = ({ column, tasks }) => {
         content: newTaskContent,
         position: tasks.length,
       });
+      fetchTasks();
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);

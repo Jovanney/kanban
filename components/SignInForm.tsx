@@ -66,7 +66,7 @@ export default function SignInForm() {
   return (
     <>
       {alert && (
-      <Alert w="100%" status={alert.status}>
+      <Alert w="100%" status={alert.status as "info" | "warning" | "success" | "error" | "loading"}>
         <AlertIcon />
         <AlertTitle>{alert.title}</AlertTitle>
         <AlertDescription>{alert.description}</AlertDescription>

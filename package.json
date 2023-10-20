@@ -24,6 +24,7 @@
     "react-apexcharts": "^1.4.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18",
+    "react-icons": "^4.11.0",
     "react-loading-skeleton": "^3.3.1"
   },
   "devDependencies": {

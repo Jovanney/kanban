@@ -41,7 +41,6 @@ const fetchTasksFromFirestore = async () => {
 }
 
 const updateTaskPositionFirestore = async (newTaskIds: string[]) => {
-  console.log("NewTasksIds: ",newTaskIds)
   const batch = writeBatch(db);
   const taskRef = collection(db, "Tasks");
 
@@ -53,6 +52,32 @@ const updateTaskPositionFirestore = async (newTaskIds: string[]) => {
   await batch.commit();
 }
 
+const updateTaskColumnPositionFirestore = async (newStartCol: ColumnData, newEndCol: ColumnData) => {
+  const batch = writeBatch(db);
+  const taskRef = collection(db, "Tasks");
+
+  // Update tasks in the source column
+  newStartCol.taskIds.forEach((taskId, index) => {
+    const taskDocRef = doc(taskRef, taskId);
+    batch.update(taskDocRef, {
+      position: index,
+      column_id: newStartCol.id,
+    });
+  });
+
+  // Update tasks in the destination column
+  newEndCol.taskIds.forEach((taskId, index) => {
+    const taskDocRef = doc(taskRef, taskId);
+    batch.update(taskDocRef, {
+      position: index,
+      column_id: newEndCol.id, 
+    });
+  });
+
+  await batch.commit();
+  console.log("Updated task positions and columns in Firestore");
+}
+
 const reorderColumnList = (sourceCol: ColumnData, startIndex: number, endIndex: number) => {
   const newTaskIds = Array.from(sourceCol.taskIds);
   const [removed] = newTaskIds.splice(startIndex, 1);
@@ -62,10 +87,6 @@ const reorderColumnList = (sourceCol: ColumnData, startIndex: number, endIndex: 
     ...sourceCol,
     taskIds: newTaskIds,
   };
-
-  console.log("Index: ",startIndex, endIndex)
-  console.log("sourceCol", sourceCol);
-  console.log("newColumn", newColumn);
 
   return newColumn;
 };
@@ -145,8 +166,6 @@ export default function KanbanBoard() {
 
       console.log("Updated task positions in Firestore");
       
-      console.log("Changed the order of tasks in the same column")
-      
       return;
     }
 
@@ -176,7 +195,10 @@ export default function KanbanBoard() {
         [newEndCol.id]: newEndCol,
       },
     };
+
     setState(newState);
+
+    await updateTaskColumnPositionFirestore(newStartCol, newEndCol);
   };
 
   return (

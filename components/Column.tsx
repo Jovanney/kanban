@@ -64,7 +64,7 @@ const Column: React.FC<ColumnProps> = ({ column, tasks, fetchTasks }) => {
   };
 
   return (
-    <Flex rounded="3px" bg="#EDF2F7" w="400px" h="620px" flexDir="column" position="relative">
+    <Flex rounded="3px" bg="#EDF2F7" w="400px" h="620px" flexDir="column" position="relative" border="1px solid #4D6C73" boxShadow="md">
       <IconButton 
         icon={<AddIcon />}
         onClick={openModal}

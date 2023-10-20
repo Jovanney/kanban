@@ -3,14 +3,7 @@ import React, { FC } from "react";
 import { Box } from "@chakra-ui/react";
 
 import {
-  Button,
-  Checkbox,
   Flex,
-  Text,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
   Stack,
   Image,
 } from '@chakra-ui/react'

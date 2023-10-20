@@ -271,20 +271,10 @@ interface NavItem {
 const NAV_ITEMS: Array<NavItem> = [
   {
     label: 'Kanban',
-    children: [
-      {
-        label: 'View Kanban Boards',
-        subLabel: 'View all of our Kanban Boards',
-        href: '#',
-      },
-      {
-        label: 'Create Kanban Board',
-        subLabel: 'Create a new Kanban Board',
-        href: '#',
-      },
-    ],
+    href: '/kanban',
   },
   {
     label: 'Dashboard',
+    href: '/dashboard',
   },
 ]

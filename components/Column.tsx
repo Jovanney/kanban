@@ -64,26 +64,26 @@ const Column: React.FC<ColumnProps> = ({ column, tasks, fetchTasks }) => {
   };
 
   return (
-    <Flex rounded="3px" bg="#EDF2F7" w="400px" h="620px" flexDir="column" position="relative" border="1px solid #4D6C73" boxShadow="md">
-      <IconButton 
-        icon={<AddIcon />}
-        onClick={openModal}
-        aria-label="Add Task"
-        position="absolute"
-        top="1rem"
-        right="1rem"
-      />
+    <Flex rounded="3px" bg="#EDF2F7" w="400px" h={{base: "310px", md:"620px"}} overflow={"auto"} flexDir="column" position="relative" border="1px solid #4D6C73" boxShadow="md">
       <Flex
         align="center"
         h="60px"
+        minH={"60px"}
         bg="#CBD5E0"
         rounded="3px 3px 0 0"
         px="1.5rem"
         mb="1.5rem"
+        justify="space-between"
       >
         <Text fontSize="17px" fontWeight={600}>
           {column.title}
         </Text>
+
+        <IconButton 
+        icon={<AddIcon />}
+        onClick={openModal}
+        aria-label="Add Task"
+      />
       </Flex>
 
       <Droppable droppableId={column.id}>

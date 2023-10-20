@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex, Stack } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
@@ -203,24 +203,22 @@ export default function KanbanBoard() {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Flex
-        flexDir="column"
-        bg="main-bg"
-        minH="100vh"
-        w="full"
-        color="white-text"
-        pb="2rem"
+        <Flex
+        direction={{ base: 'column', md: 'row' }}
+        gap={{ base: 4, md: 8 }}
+        justify={{ base: 'space-between', md: 'center' }}
+        align={{ base: 'center', md: 'flex-start' }}
+        rounded="lg"
+        boxShadow="md"
       >
-
-        <Flex justify="space-between" px="4rem">
-          {state.columnOrder.map((columnId) => {
+        {state.columnOrder.map((columnId) => {
             const column = state.columns[columnId];
             const tasks = column.taskIds
               .map((taskId) => state.tasks[taskId])
             return <Column key={column.id} column={column} tasks={tasks} fetchTasks={fetchTasks} />;
           })}
-        </Flex>
       </Flex>
+
     </DragDropContext>
   );
 };

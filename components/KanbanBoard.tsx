@@ -62,6 +62,7 @@ const updateTaskColumnPositionFirestore = async (newStartCol: ColumnData, newEnd
     batch.update(taskDocRef, {
       position: index,
       column_id: newStartCol.id,
+      doneDate: null, // Set doneDate to null when moving away from column-3
     });
   });
 
@@ -70,13 +71,15 @@ const updateTaskColumnPositionFirestore = async (newStartCol: ColumnData, newEnd
     const taskDocRef = doc(taskRef, taskId);
     batch.update(taskDocRef, {
       position: index,
-      column_id: newEndCol.id, 
+      column_id: newEndCol.id,
+      doneDate: newEndCol.id === "column-3" ? new Date().toISOString() : null, // Set doneDate to current date if moving to column-3
     });
   });
 
   await batch.commit();
   console.log("Updated task positions and columns in Firestore");
-}
+};
+
 
 const reorderColumnList = (sourceCol: ColumnData, startIndex: number, endIndex: number) => {
   const newTaskIds = Array.from(sourceCol.taskIds);

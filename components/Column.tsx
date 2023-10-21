@@ -47,21 +47,31 @@ const Column: React.FC<ColumnProps> = ({ column, tasks, fetchTasks }) => {
     try {
       const columnId = column.id; // Get the column ID
       const newTaskContent = newTaskDetails;
-
-      const docRef = await addDoc(collection(db, "Tasks"), {
+  
+      // Determine if the task is in column-3
+      const isColumn3 = columnId === "column-3";
+  
+      // Set the doneDate to the current date if it's in column-3
+      const doneDate = isColumn3 ? new Date().toISOString() : null;
+  
+      const docData = {
         column_id: columnId,
         content: newTaskContent,
         position: tasks.length,
-      });
+        doneDate, // Set doneDate property
+      };
+  
+      const docRef = await addDoc(collection(db, "Tasks"), docData);
       fetchTasks();
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-
+  
     // Close the modal
     closeModal();
   };
+  
 
   return (
     <Flex rounded="3px" bg="#EDF2F7" w="400px" h={{base: "310px", md:"620px"}} overflow={"auto"} flexDir="column" position="relative" border="1px solid #4D6C73" boxShadow="md">

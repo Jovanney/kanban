@@ -19,8 +19,9 @@ interface LineChartProps {
 
 
 const LineChart: React.FC<LineChartProps> = ({ data }) => {
-  const categories = data.map((item) => item.date);
-  const series = data.map((item) => item.count);
+  const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const categories = sortedData.map((item) => item.date);
+  const series = sortedData.map((item) => item.count);
 
   const state = {
     options: {

@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# KANBAN WITH DASHBOARD WEB
 
-## Getting Started
 
-First, run the development server:
+### Como executar o projeto
 
-```bash
+- Clone este repositório.
+  - `$ git clone {URL deste repositório} `
+
+
+## Pré-requisitos
+
+- Verifique se o Node.js e o npm estão devidamente instalados e com as variáveis de ambiente configuradas.
+
+    - `$ node --version`
+    - `$ npm --version`
+
+### instalando as dependencias 
+
+- Rode o comando abaixo para instalar as dependencias do projeto
+
+    - `$ npm install`
+
+<hr />
+
+
+### Executando o projeto
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## O que é um kanban board?
 
-## Learn More
+No contexto de um quadro Kanban, as tarefas são representadas como cartões que são movidos entre diferentes colunas, cada uma representando um estágio específico do fluxo de trabalho. Isso permite que as equipes visualizem o trabalho em andamento, identifiquem gargalos e tomem decisões informadas para otimizar o processo.
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Demonstração de arrastar e soltar
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+A aplicação foi desenvolvida com o intuito de ser fácil de usar e intuitiva. O usuário pode criar novas tarefas e movê-las entre as colunas conforme necessário. Além disso, o dashboard fornece uma visão geral do progresso do usuário, permitindo que ele veja quantas tarefas foram concluídas, quantas estão em andamento e quantas ainda precisam ser iniciadas, além de ver quantas tarefas foram concluídas em uma determinada data.
 
-## Deploy on Vercel
+Demonstração:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+![site image 1](https://github.com/PeterBaptista/KanbanTT/blob/master/kanban-web/public/arrastar.gif)
